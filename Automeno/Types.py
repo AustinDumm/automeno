@@ -23,7 +23,7 @@ class Pitch:
         self.octave = octave
 
     def midi_pitch(self) -> int:
-        return pitch_offset + self.key * self.octave
+        return self.octave * 12 + self.pitch_offset + self.key
 
 
 class Volume:

@@ -3,7 +3,7 @@ from Automeno.ComponentFactory import AutomenoComponentDelegate
 from Automeno.Component import AutomenoComponentProtocol
 
 @AutomenoComponentDelegate("FileCharacter")
-class FileCharacterComponentProtocol(AutomenoComponentProtocol):
+class FileCharacterComponentDelegate(AutomenoComponentProtocol):
     def inports():
         return {}
 
@@ -23,12 +23,12 @@ class FileCharacterComponentProtocol(AutomenoComponentProtocol):
 
 
 @AutomenoComponentDelegate("CharacterToNote")
-class CharacterToNoteComponentProtocol(AutomenoComponentProtocol):
+class CharacterToNoteComponentDelegate(AutomenoComponentProtocol):
     def inports():
         return { "Character": str }
 
     def outports():
-        return { "Note": Note }
+        return { "Notes": [Note] }
 
     def parameters_types():
         return { "PlayNote": Note, "PlayCharacters": str }
@@ -37,7 +37,22 @@ class CharacterToNoteComponentProtocol(AutomenoComponentProtocol):
         while True:
             character = "".join(inports["Character"].evaluate())
             if character in parameters["PlayCharacters"]:
-                yield { "Note": parameters["PlayNote"] }
+                yield { "Notes": [parameters["PlayNote"]] }
             else:
-                yield { "Note": None }
+                yield { "Notes": [] }
+
+@AutomenoComponentDelegate("Channel")
+class ChannelSinkComponentDelegate(AutomenoComponentProtocol):
+    def inports():
+        return { "Notes": [Note] }
+
+    def outports():
+        return {}
+
+    def parameters_types():
+        return { "Channel": int }
+
+    def evaluate_generator(inports, parameters):
+        while True:
+            yield inports["Notes"].evaluate()
 
