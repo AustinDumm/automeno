@@ -1,6 +1,6 @@
-from Automeno.AutomenoTypes import *
+from Automeno.Types import *
 from Automeno.DefaultComponents import *
-from Automeno.AutomenoComponentFactory import *
+from Automeno.ComponentFactory import *
 
 file_component = AutomenoComponentFactory("FileCharacter", { "FileName": "main.py" })
 character_to_note_component = AutomenoComponentFactory("CharacterToNote", { "PlayNote": Note(Pitch(Key.C, 4), Volume(100), 960 / 2), "PlayCharacters": "aeiou" })

@@ -1,6 +1,6 @@
-from Automeno.AutomenoTypes import *
-from Automeno.AutomenoComponentFactory import AutomenoComponentDelegate
-from Automeno.AutomenoComponent import AutomenoComponentProtocol
+from Automeno.Types import *
+from Automeno.ComponentFactory import AutomenoComponentDelegate
+from Automeno.Component import AutomenoComponentProtocol
 
 @AutomenoComponentDelegate("FileCharacter")
 class FileCharacterComponentProtocol(AutomenoComponentProtocol):

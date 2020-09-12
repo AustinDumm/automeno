@@ -1,4 +1,4 @@
-from Automeno.AutomenoComponent import Component
+from Automeno.Component import Component
 
 _AUTOMENO_COMPONENT_DELEGATES = {}
 
