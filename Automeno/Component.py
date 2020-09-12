@@ -36,7 +36,8 @@ class InPort(Port):
         self.connected_outports.append(outport)
 
     def evaluate(self):
-        return list(map(lambda outport: outport.evaluate(), self.connected_outports))
+        nested_list = list(map(lambda outport: outport.evaluate(), self.connected_outports))
+        return [value for element in nested_list for value in element]
 
 
 class Component:
