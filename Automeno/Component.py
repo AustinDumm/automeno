@@ -47,7 +47,7 @@ class Component:
         self.parameters = parameters
 
         if not self.valid(delegate.parameters_types()):
-            raise Exception("Invalid Component Parameters")
+            raise Exception("Invalid Component Parameters: {}".format(self.parameters))
 
         self.evaluate_generator = delegate.evaluate_generator(self.inports, parameters)
         self.current_evaluation = None

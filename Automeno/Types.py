@@ -38,3 +38,10 @@ class Note:
         self.pitch = pitch
         self.volume = volume
         self.tick_length = tick_length
+
+    def __str__(self):
+        return "({}, {}, {}, {})".format(str(self.pitch.key), self.pitch.octave, self.volume.volume, self.tick_length)
+
+    def from_string(string):
+        sections = string.strip("()").split[","]
+        return Note(Pitch(Key[sections[0]], sections[1]), Volume(sections[2]), sections[3])

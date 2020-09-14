@@ -50,7 +50,7 @@ class ChannelSinkComponentDelegate(AutomenoComponentProtocol):
         return {}
 
     def parameters_types():
-        return { "Channel": int }
+        return { "Channel": int, "Program": int, "Track": int }
 
     def evaluate_generator(inports, parameters):
         while True:
