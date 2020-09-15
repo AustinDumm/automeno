@@ -56,3 +56,4 @@ class ChannelSinkComponentDelegate(AutomenoComponentProtocol):
         while True:
             yield inports["Notes"].evaluate()
 
+

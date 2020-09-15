@@ -123,8 +123,13 @@ def _command_run(*args):
     return "Created {}".format(file_name)
 
 @AutomenoInteractiveCommand("export")
+@AutomenoInteractiveArguments([("file_name", str)])
 def _command_export(*args):
-    pass
+    macheno = args[0]
+    file_name = args[1]
+    
+    return f'Exported to file {file_name}'
+    
 
 @AutomenoInteractiveCommand("import")
 def _command_import(*args):

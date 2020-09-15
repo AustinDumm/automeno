@@ -14,5 +14,5 @@ def AutomenoComponentFactory(delegate_name, parameters):
     if delegate_name not in _AUTOMENO_COMPONENT_DELEGATES:
         raise Exception("Delegate {} does not exist".format(delegate_name))
 
-    return Component(_AUTOMENO_COMPONENT_DELEGATES[delegate_name], parameters)
+    return Component(_AUTOMENO_COMPONENT_DELEGATES[delegate_name], delegate_name, parameters)
 
