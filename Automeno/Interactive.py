@@ -127,7 +127,7 @@ def _command_run(*args):
 def _command_export(*args):
     macheno = args[0]
     file_name = args[1]
-    
+    print(macheno.serialize())
     return f'Exported to file {file_name}'
     
 

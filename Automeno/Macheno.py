@@ -1,6 +1,17 @@
 from Automeno.Component import *
 from Automeno.ComponentFactory import AutomenoComponentFactory
+from midiutil import MIDIFile
+import json
 
+class MachenoJSONEncoder(AutomenoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Macheno):
+            return { "components": obj.components,\
+                     "channels_keys": obj.channels_keys }
+        if isinstance(obj, MIDIFile):
+            return ""
+        else:
+            return super().default(obj)
 
 class Macheno():
     def __init__(self, midi_file):
@@ -36,4 +47,7 @@ class Macheno():
 
         with open(file_name, "wb") as f:
             self.midi_file.writeFile(f)
+
+    def serialize(self):
+        return json.dumps(self, indent=2, sort_keys=True, cls=MachenoJSONEncoder)
 
