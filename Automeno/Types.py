@@ -42,7 +42,7 @@ class Pitch(DictSerializable):
                  "octave": obj.octave }
 
     def deserialize(dictionary):
-        return Pitch(Key.deserialize(dictionary["key"], dictionary["octave"]))
+        return Pitch(Key.deserialize(dictionary["key"]), dictionary["octave"])
 
 
 class Volume(DictSerializable):

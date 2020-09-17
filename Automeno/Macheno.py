@@ -39,17 +39,24 @@ class Macheno(DictSerializable):
         with open(file_name, "wb") as f:
             self.midi_file.writeFile(f)
 
+    def update_self(self, dictionary):
+        new_macheno = Macheno.deserialize(dictionary)
+        self.components = new_macheno.components
+        self.channels_keys = new_macheno.channels_keys
+
     def serialize(obj):
         return { "midi_file": "blah",\
                  "components": dict(map(lambda name_component: (name_component[0], Component.serialize(name_component[1])), obj.components.items())),\
                  "channels_keys": obj.channels_keys }
 
     def deserialize(dictionary):
-        macheno = Macheno(None)
+        macheno = Macheno(MIDIFile(numTracks=1, removeDuplicates=True, eventtime_is_ticks=True))
         for key, value in dictionary["components"].items():
-            if key in macheno["channels_keys"]:
+            if key in dictionary["channels_keys"]:
                 macheno.add_channel(key, Component.deserialize(value))
             else:
                 macheno.add_component(key, Component.deserialize(value))
+
+        return macheno
 
 

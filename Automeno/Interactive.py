@@ -129,13 +129,24 @@ def _command_run(*args):
 def _command_export(*args):
     macheno = args[0]
     file_name = args[1]
-    print(json.dumps(macheno.serialize(), indent=2, sort_keys=True))
+
+    with open(file_name, "w") as f:
+        f.write(json.dumps(macheno.serialize(), indent=2, sort_keys=True))
+
     return f'Exported to file {file_name}'
     
 
 @AutomenoInteractiveCommand("import")
+@AutomenoInteractiveArguments([("file_name", str)])
 def _command_import(*args):
-    pass
+    macheno = args[0]
+    file_name = args[1]
+    
+    with open(file_name, "r") as f:
+        in_dictionary = json.loads(f.read())
+        macheno.update_self(in_dictionary)
+
+    return f'Imported file {file_name}'
 
     
 def interactive(initial_macheno):
