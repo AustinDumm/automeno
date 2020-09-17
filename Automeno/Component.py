@@ -1,5 +1,6 @@
 import json
 from Automeno.Types import *
+from Automeno.ComponentFactory import _AUTOMENO_COMPONENT_DELEGATES
 
 class AutomenoComponentProtocol:
     def inports():
@@ -10,32 +11,6 @@ class AutomenoComponentProtocol:
         raise NotImplementedError("Must subclass AutomenoComponentProtocol")
     def evaluate_generator(inports, parameters):
         raise NotImplementedError("Must subclass AutomenoComponentProtocol")
-
-
-class AutomenoJSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Component):
-            return { "delegate_name": obj.delegate_name,\
-                     "inports": obj.inports,\
-                     "outports": obj.outports,\
-                     "parameters": obj.parameters }
-        elif isinstance(obj, Port):
-            return { "name": obj.name,\
-                     "port_type": obj.port_type }
-        elif isinstance(obj, Key):
-            return obj.value
-        elif isinstance(obj, Pitch):
-            return { "key": obj.key, "octave": obj.octave }
-        elif isinstance(obj, Volume):
-            return obj.volume
-        elif isinstance(obj, Note):
-            return { "pitch": obj.pitch,\
-                     "volume": obj.volume,\
-                     "tick_length": obj.tick_length }
-        elif isinstance(obj, type):
-            return obj.__name__
-        else:
-            json.JSONEncoder.default(self, obj)
 
 
 class Port:
@@ -68,7 +43,7 @@ class InPort(Port):
         return [value for element in nested_list for value in element]
 
 
-class Component:
+class Component(DictSerializable):
     def __init__(self, delegate, delegate_name, parameters):
         self.delegate_name = delegate_name
         self.inports = dict(map(lambda key_value: (key_value[0], InPort(key_value[0], key_value[1], self)), delegate.inports().items()))
@@ -100,6 +75,28 @@ class Component:
     def evaluate_outport(self, outport_name):
         return self.evaluate()[outport_name]
 
-    def serialize(self):
-        return json.dumps(self, indent=2, sort_keys=True, cls=AutomenoJSONEncoder)
+    def serialize(obj):
+        parameters = {}
+        for name, value in obj.parameters.items():
+            if callable(getattr(type(value), "serialize", None)):
+                parameters[name] = type(value).serialize(value)
+            else:
+                parameters[name] = value
+
+        return { "delegate_name": obj.delegate_name,\
+                "parameters": parameters }
+
+    def deserialize(dictionary):
+        delegate = _AUTOMENO_COMPONENT_DELEGATES[dictionary["delegate_name"]]
+        parameter_types = delegate.parameters_types()
+        raw_parameters = dictionary["parameters"]
+        finished_parameters = {}
+        for key, parameter_type in parameter_types.items():
+            if parameter_type == type(raw_parameters[key]):
+                finished_parameters[key] = raw_parameters[key]
+            else:
+                parameter_object = parameter_type.deserialize(raw_parameters[key])
+
+        return Component(delegate, dictionary["delegate_name"], finished_parameters)
+
 

@@ -1,19 +1,10 @@
+from Automeno.Types import DictSerializable
 from Automeno.Component import *
 from Automeno.ComponentFactory import AutomenoComponentFactory
 from midiutil import MIDIFile
 import json
 
-class MachenoJSONEncoder(AutomenoJSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Macheno):
-            return { "components": obj.components,\
-                     "channels_keys": obj.channels_keys }
-        if isinstance(obj, MIDIFile):
-            return ""
-        else:
-            return super().default(obj)
-
-class Macheno():
+class Macheno(DictSerializable):
     def __init__(self, midi_file):
         self.components = {}
         self.channels_keys = []
@@ -48,6 +39,17 @@ class Macheno():
         with open(file_name, "wb") as f:
             self.midi_file.writeFile(f)
 
-    def serialize(self):
-        return json.dumps(self, indent=2, sort_keys=True, cls=MachenoJSONEncoder)
+    def serialize(obj):
+        return { "midi_file": "blah",\
+                 "components": dict(map(lambda name_component: (name_component[0], Component.serialize(name_component[1])), obj.components.items())),\
+                 "channels_keys": obj.channels_keys }
+
+    def deserialize(dictionary):
+        macheno = Macheno(None)
+        for key, value in dictionary["components"].items():
+            if key in macheno["channels_keys"]:
+                macheno.add_channel(key, Component.deserialize(value))
+            else:
+                macheno.add_component(key, Component.deserialize(value))
+
 

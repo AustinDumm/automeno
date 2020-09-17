@@ -5,6 +5,8 @@ from Automeno.ComponentFactory import AutomenoComponentFactory
 from collections import defaultdict
 from functools import reduce
 
+import json
+
 _command_dictionary = defaultdict(lambda: _command_not_found)
 def _command_not_found():
     return "Command not found"
@@ -127,7 +129,7 @@ def _command_run(*args):
 def _command_export(*args):
     macheno = args[0]
     file_name = args[1]
-    print(macheno.serialize())
+    print(json.dumps(macheno.serialize(), indent=2, sort_keys=True))
     return f'Exported to file {file_name}'
     
 

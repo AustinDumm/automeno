@@ -1,4 +1,3 @@
-from Automeno.Component import Component
 
 _AUTOMENO_COMPONENT_DELEGATES = {}
 
@@ -11,6 +10,7 @@ def AutomenoComponentDelegate(name):
     return process_class
 
 def AutomenoComponentFactory(delegate_name, parameters):
+    from Automeno.Component import Component
     if delegate_name not in _AUTOMENO_COMPONENT_DELEGATES:
         raise Exception("Delegate {} does not exist".format(delegate_name))
 
