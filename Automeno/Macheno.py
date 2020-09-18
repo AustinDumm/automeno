@@ -40,7 +40,7 @@ class Macheno(DictSerializable):
         for tick in range(0, 960 * 30, 960 // 2):
             for channel_key in self.channels_keys:
                 channel = self.components[channel_key]
-                notes = channel.evaluate()
+                notes = channel.evaluate(tick)
 
                 for note in notes:
                     midi_file.addNote(0, channel.parameters["Channel"], note.pitch.midi_pitch(), tick, note.tick_length, note.volume.volume)

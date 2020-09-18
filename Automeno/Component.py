@@ -19,13 +19,13 @@ class Port:
         self.port_type = port_type
         self.component = component
 
-    def evaluate(self):
+    def evaluate(self, tick):
         raise NotImplementedError("Must subclass Port")
 
 
 class OutPort(Port):
-    def evaluate(self):
-        return self.component.evaluate_outport(self.name)
+    def evaluate(self, tick):
+        return self.component.evaluate_outport(self.name, tick)
 
 class InPort(Port):
     def __init__(self, name, port_type, component):
@@ -38,8 +38,8 @@ class InPort(Port):
 
         self.connected_outports.append(outport)
 
-    def evaluate(self):
-        nested_list = list(map(lambda outport: outport.evaluate(), self.connected_outports))
+    def evaluate(self, tick):
+        nested_list = list(map(lambda outport: outport.evaluate(tick), self.connected_outports))
         return [value for element in nested_list for value in element]
 
 
@@ -67,14 +67,15 @@ class Component(DictSerializable):
     def reset(self):
         self.current_evaluation = None
 
-    def evaluate(self):
+    def evaluate(self, tick):
         if self.current_evaluation == None:
             self.current_evaluation = next(self.evaluate_generator)
+            self.current_evaluation = self.evaluate_generator.send(tick)
 
         return self.current_evaluation
 
-    def evaluate_outport(self, outport_name):
-        return self.evaluate()[outport_name]
+    def evaluate_outport(self, outport_name, tick):
+        return self.evaluate(tick)[outport_name]
 
     def serialize(obj):
         parameters = {}

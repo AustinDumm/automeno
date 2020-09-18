@@ -35,11 +35,12 @@ class CharacterToNoteComponentDelegate(AutomenoComponentProtocol):
 
     def evaluate_generator(inports, parameters):
         while True:
-            character = "".join(inports["Character"].evaluate())
+            tick = 0
+            character = "".join(inports["Character"].evaluate(tick))
             if character in parameters["PlayCharacters"]:
-                yield { "Notes": [parameters["PlayNote"]] }
+                tick = yield { "Notes": [parameters["PlayNote"]] }
             else:
-                yield { "Notes": [] }
+                tick = yield { "Notes": [] }
 
 @AutomenoComponentDelegate("Channel")
 class ChannelSinkComponentDelegate(AutomenoComponentProtocol):
@@ -53,7 +54,8 @@ class ChannelSinkComponentDelegate(AutomenoComponentProtocol):
         return { "Channel": int, "Program": int, "Track": int }
 
     def evaluate_generator(inports, parameters):
+        tick = 0
         while True:
-            yield inports["Notes"].evaluate()
+            tick = yield inports["Notes"].evaluate(tick)
 
 
