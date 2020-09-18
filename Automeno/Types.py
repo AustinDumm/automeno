@@ -78,4 +78,4 @@ class Note(DictSerializable):
     def deserialize(dictionary):
         return Note(Pitch.deserialize(dictionary["pitch"]),\
                 Volume.deserialize(dictionary["volume"]),\
-                dictionary["volume"])
+                dictionary["tick_length"])

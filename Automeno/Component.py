@@ -98,6 +98,7 @@ class Component(DictSerializable):
                 finished_parameters[key] = raw_parameters[key]
             else:
                 parameter_object = parameter_type.deserialize(raw_parameters[key])
+                finished_parameters[key] = parameter_object
 
         return Component(dictionary["name"], delegate, dictionary["delegate_name"], finished_parameters)
 
