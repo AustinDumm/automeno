@@ -44,7 +44,8 @@ class InPort(Port):
 
 
 class Component(DictSerializable):
-    def __init__(self, delegate, delegate_name, parameters):
+    def __init__(self, name, delegate, delegate_name, parameters):
+        self.name = name
         self.delegate_name = delegate_name
         self.inports = dict(map(lambda key_value: (key_value[0], InPort(key_value[0], key_value[1], self)), delegate.inports().items()))
         self.outports = dict(map(lambda key_value: (key_value[0], OutPort(key_value[0], key_value[1], self)), delegate.outports().items()))
@@ -83,8 +84,9 @@ class Component(DictSerializable):
             else:
                 parameters[name] = value
 
-        return { "delegate_name": obj.delegate_name,\
-                "parameters": parameters }
+        return { "name": obj.name,\
+                 "delegate_name": obj.delegate_name,\
+                 "parameters": parameters }
 
     def deserialize(dictionary):
         delegate = _AUTOMENO_COMPONENT_DELEGATES[dictionary["delegate_name"]]
@@ -97,6 +99,6 @@ class Component(DictSerializable):
             else:
                 parameter_object = parameter_type.deserialize(raw_parameters[key])
 
-        return Component(delegate, dictionary["delegate_name"], finished_parameters)
+        return Component(dictionary["name"], delegate, dictionary["delegate_name"], finished_parameters)
 
 

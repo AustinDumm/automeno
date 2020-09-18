@@ -79,7 +79,7 @@ def _command_create(*args):
         for key, value in parameters.items():
             parameter_values[key] = eval(input("{} ({}):".format(key, value)))
 
-        component = AutomenoComponentFactory(delegate_name, parameter_values)
+        component = AutomenoComponentFactory(item_name, delegate_name, parameter_values)
         macheno.add_component(item_name, component)
     elif item_type == "channel":
         delegate = _AUTOMENO_COMPONENT_DELEGATES["Channel"]
@@ -88,7 +88,7 @@ def _command_create(*args):
         for key, value in parameters.items():
             parameter_values[key] = value(input("{} ({}):".format(key, value)))
 
-        channel = AutomenoComponentFactory("Channel", parameter_values)
+        channel = AutomenoComponentFactory(item_name, "Channel", parameter_values)
         macheno.add_channel(item_name, channel)
     else:
         return "item_type must be \"component\" or \"channel\""
