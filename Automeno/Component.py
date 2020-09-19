@@ -1,6 +1,7 @@
 import json
 from Automeno.Types import *
 from Automeno.ComponentFactory import _AUTOMENO_COMPONENT_DELEGATES
+from functools import reduce
 
 class AutomenoComponentProtocol:
     def inports():
@@ -39,8 +40,9 @@ class InPort(Port):
         self.connected_outports.append(outport)
 
     def evaluate(self, tick):
-        nested_list = list(map(lambda outport: outport.evaluate(tick), self.connected_outports))
-        return [value for element in nested_list for value in element]
+        evaluated_list = list(reduce(lambda acc, outport: acc + [outport.evaluate(tick)], self.connected_outports, []))
+        #return [value for element in nested_list for value in element]
+        return evaluated_list
 
 
 class Component(DictSerializable):

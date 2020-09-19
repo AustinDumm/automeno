@@ -22,25 +22,49 @@ class FileCharacterComponentDelegate(AutomenoComponentProtocol):
                     character = f.read(1)
 
 
-@AutomenoComponentDelegate("CharacterToNote")
-class CharacterToNoteComponentDelegate(AutomenoComponentProtocol):
+@AutomenoComponentDelegate("NoteGenerator")
+class NoteGeneratorDelegate(AutomenoComponentProtocol):
     def inports():
-        return { "Character": str }
+        return { "On": bool }
 
     def outports():
         return { "Notes": [Note] }
 
     def parameters_types():
-        return { "PlayNote": Note, "PlayCharacters": str }
+        return { "PlayNote": Note,
+                 "NeedAllOn": bool }
 
     def evaluate_generator(inports, parameters):
+        tick = 0
         while True:
-            tick = 0
-            character = "".join(inports["Character"].evaluate(tick))
-            if character in parameters["PlayCharacters"]:
+            if parameters["NeedAllOn"] and all(inports["On"].evaluate(tick)):
+                tick = yield { "Notes": [parameters["PlayNote"]] }
+            elif not parameters["NeedAllOn"] and any(inports["On"].evaluate(tick)):
                 tick = yield { "Notes": [parameters["PlayNote"]] }
             else:
                 tick = yield { "Notes": [] }
+
+@AutomenoComponentDelegate("WordExists")
+class WordExistsDelegate(AutomenoComponentProtocol):
+    def inports():
+        return { "Word": str }
+
+    def outports():
+        return { "Exists": bool }
+
+    def parameters_types():
+        return { "WordToCheck": str,
+                 "NeedAllMatch": bool}
+
+    def evaluate_generator(inports, parameters):
+        tick = 0
+        while True:
+            check = inports["Word"].evaluate(tick)
+            if parameters["NeedAllMatch"]:
+                tick = yield  { "Exists": all(map(lambda word: word in parameters["WordToCheck"], check) )}
+            else:
+                tick = yield  { "Exists": any(map(lambda word: word in parameters["WordToCheck"], check) )}
+            
 
 @AutomenoComponentDelegate("Channel")
 class ChannelSinkComponentDelegate(AutomenoComponentProtocol):
@@ -51,7 +75,7 @@ class ChannelSinkComponentDelegate(AutomenoComponentProtocol):
         return {}
 
     def parameters_types():
-        return { "Channel": int, "Program": int, "Track": int }
+        return { "Channel": int, "Program": int }
 
     def evaluate_generator(inports, parameters):
         tick = 0
