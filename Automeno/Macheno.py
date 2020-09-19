@@ -33,9 +33,19 @@ class Macheno(DictSerializable):
         print(self.num_tracks_needed())
         midi_file = MIDIFile(numTracks=self.num_tracks_needed(), removeDuplicates=True, eventtime_is_ticks=True)
 
-        for key in self.channels_keys:
+        next_drum_track = 0
+        for index, key in enumerate(self.channels_keys):
             channel = self.components[key]
-            midi_file.addProgramChange(channel.parameters["Track"], channel.parameters["Channel"], 0, channel.parameters["Program"])
+
+            track = 0
+            if channel.parameters["Channel"] == Macheno.percussion_channel:
+                track = next_drum_track
+                next_drum_track += 1
+            else:
+                track = index // 16
+            
+            print("track {}".format(track))
+            midi_file.addProgramChange(track, channel.parameters["Channel"], 0, channel.parameters["Program"])
 
         for tick in range(0, 960 * 30, 960 // 2):
             for channel_key in self.channels_keys:

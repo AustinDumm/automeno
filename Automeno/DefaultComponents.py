@@ -54,7 +54,7 @@ class WordExistsDelegate(AutomenoComponentProtocol):
 
     def parameters_types():
         return { "WordToCheck": str,
-                 "NeedAllMatch": bool}
+                 "NeedAllMatch": bool }
 
     def evaluate_generator(inports, parameters):
         tick = 0
@@ -65,6 +65,24 @@ class WordExistsDelegate(AutomenoComponentProtocol):
             else:
                 tick = yield  { "Exists": any(map(lambda word: word in parameters["WordToCheck"], check) )}
             
+
+@AutomenoComponentDelegate("RhythmGenerator")
+class RhythmGeneratorDelegate(AutomenoComponentProtocol):
+    def inports():
+        return {}
+
+    def outports():
+        return { "On": str }
+
+    def parameters_types():
+        return { "Equation": str }
+
+    def evaluate_generator(inports, parameters):
+        tick = 0
+        while True:
+            equation = parameters["Equation"]
+            tick = yield eval(equation, { "tick": tick })
+                
 
 @AutomenoComponentDelegate("Channel")
 class ChannelSinkComponentDelegate(AutomenoComponentProtocol):
