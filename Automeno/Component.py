@@ -57,6 +57,7 @@ class Component(DictSerializable):
             raise Exception("Invalid Component Parameters: {}".format(self.parameters))
 
         self.evaluate_generator = delegate.evaluate_generator(self.inports, parameters)
+        next(self.evaluate_generator)
         self.current_evaluation = None
 
     def valid(self, parameters_types):
@@ -71,7 +72,6 @@ class Component(DictSerializable):
 
     def evaluate(self, tick):
         if self.current_evaluation == None:
-            self.current_evaluation = next(self.evaluate_generator)
             self.current_evaluation = self.evaluate_generator.send(tick)
 
         return self.current_evaluation

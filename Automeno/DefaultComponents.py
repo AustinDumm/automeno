@@ -72,7 +72,7 @@ class RhythmGeneratorDelegate(AutomenoComponentProtocol):
         return {}
 
     def outports():
-        return { "On": str }
+        return { "On": bool }
 
     def parameters_types():
         return { "Equation": str }
@@ -81,7 +81,8 @@ class RhythmGeneratorDelegate(AutomenoComponentProtocol):
         tick = 0
         while True:
             equation = parameters["Equation"]
-            tick = yield eval(equation, { "tick": tick })
+            value = eval(equation, { "tick": tick })
+            tick = yield { "On": value }
                 
 
 @AutomenoComponentDelegate("Channel")
